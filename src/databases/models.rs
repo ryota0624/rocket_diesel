@@ -5,7 +5,7 @@ use super::schema::comments;
 
 use diesel::*;
 
-#[derive(Queryable, Identifiable, PartialEq)]
+#[derive(Queryable, Identifiable, PartialEq, Clone)]
 pub struct Post {
     pub id: i32,
     pub title: String,

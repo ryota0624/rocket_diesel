@@ -8,8 +8,10 @@ use databases::schema::posts;
 
 use databases::models::{Post, NewPost, Comment};
 use diesel::prelude::*;
+
 use rocket_contrib::json::Json;
 use controller::*;
+use diesel::pg::Pg;
 
 #[derive(Serialize, Deserialize)]
 struct PostJson {
@@ -25,7 +27,7 @@ struct CommentJson {
 #[derive(Serialize, Deserialize)]
 struct PostWithComments {
     post: PostJson,
-    comments: Vec<CommentJson>
+    comments: Vec<CommentJson>,
 }
 
 #[get("/posts/all")]
@@ -37,18 +39,25 @@ fn all() -> Json<JsonResult<Vec<PostWithComments>>> {
         .into_iter().rev().collect();
 
     let results =
-            post_daos
-                .into_iter()
-                .map (|post_dao: Post| -> PostWithComments {
-                    let comments = Comment::belonging_to(&post_dao)
-                        .load::<Comment>(&pg_conn)
-                        .expect("Error loading comments");
-                    PostWithComments {
-                        post: post_dao_to_json(post_dao),
-                        comments: comments.into_iter().map(comment_dao_to_json).collect::<Vec<CommentJson>>()
-                    }
-                }).collect::<Vec<PostWithComments>>();
+        post_daos
+            .into_iter()
+            .map(|post_dao: Post| -> PostWithComments {
+                let cl = &post_dao.clone();
+                let sql = Comment::belonging_to(cl);
 
+                let log_sql = diesel::debug_query::<Pg, _>(
+                    &sql
+                );
+                let _ = println!("{}", log_sql);
+
+
+                let comments = sql.load::<Comment>(&pg_conn)
+                    .expect("Error loading comments");
+                PostWithComments {
+                    post: post_dao_to_json(post_dao),
+                    comments: comments.into_iter().map(comment_dao_to_json).collect::<Vec<CommentJson>>(),
+                }
+            }).collect::<Vec<PostWithComments>>();
 
 
     json_response(results)
