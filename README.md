@@ -11,3 +11,5 @@ https://keens.github.io/blog/2017/12/16/dieselshounetashuu/
 
 
 curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "{\"title\": \"feaf\", \"body\": \"bbofa\"}" http://localhost:8000/posts
+
+https://qnighy.hatenablog.com/entry/2017/06/01/070000
