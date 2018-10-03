@@ -7,3 +7,11 @@ fn handler(msg: &RawStr) -> String {
     msg.as_str().to_string()
 }
 
+impl MsgController for COntroller {
+    fn handlers() {
+        vec![
+            handler,
+            handler
+            ]
+    }
+}
