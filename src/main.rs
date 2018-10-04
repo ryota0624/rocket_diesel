@@ -32,12 +32,33 @@ fn not_found(_req_: &Request) -> String {
 
 trait Server {
     fn controllers() -> Vec<Controller>
-    fn init() {
+    fn start() {
         let handlers = controllers().flatMap(controller -> controller.handlers())
-
         rocket::ignite()
         .mount("/", routes!handlers)
     }
+
+    fn init()
+    fn onStoped()
+}
+
+
+impl Server for Application {
+        fn controllers() -> Vec<Controller> {
+            [
+                msg_controller,
+                post_controller,
+                post_controller
+            ]
+        }
+
+        fn init() {
+            logger.info("start")
+        }
+
+        fn onStoped() {
+            logger.info("stoped")
+        }
 }
 
 
