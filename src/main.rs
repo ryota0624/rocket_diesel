@@ -30,6 +30,17 @@ fn not_found(_req_: &Request) -> String {
     "not_found".to_string()
 }
 
+trait Server {
+    fn controllers() -> Vec<Controller>
+    fn init() {
+        let handlers = controllers().flatMap(controller -> controller.handlers())
+
+        rocket::ignite()
+        .mount("/", routes!handlers)
+    }
+}
+
+
 fn main() {
     rocket::ignite()
         .mount("/", routes![
